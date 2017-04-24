@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.lmg</groupId>
-	<artifactId>testSQS3</artifactId>
+	<artifactId>testSQS4</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>testSQS3</name>
+	<name>testSQS4</name>
 	<description>Demo project for Spring Boot</description>
 
 	<parent>
@@ -23,7 +23,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.7</java.version>
-        <start-class>com.lmg.TestSqs3Application</start-class>
+        <start-class>com.lmg.TestSqs4Application</start-class>
     </properties>
 
 	<dependencies>
@@ -101,7 +101,7 @@
       				<archive>
         				<manifest>
           					<addClasspath>true</addClasspath>
-          					<mainClass>com.lmg.TestSqs3Application</mainClass>
+          					<mainClass>com.lmg.TestSqs4Application</mainClass>
         				</manifest>
       				</archive>
     			</configuration>

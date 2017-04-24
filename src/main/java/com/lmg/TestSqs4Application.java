@@ -8,13 +8,16 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicSessionCredentials;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
-
+import com.amazonaws.services.securitytoken.AWSSecurityTokenServiceClient;
+import com.amazonaws.services.securitytoken.model.AssumeRoleRequest;
+import com.amazonaws.services.securitytoken.model.AssumeRoleResult;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.CreateQueueRequest;
@@ -31,6 +34,11 @@ public class TestSqs4Application {
 //	public static void main(String[] args) {
 //		SpringApplication.run(TestSqs4Application.class, args);
 //	}
+	
+	static String  param_assumed_role ="arn:aws:iam::347970623729:role/dae_from_support";
+	static String param_region="eu-central-1";
+	static String param_sessionName = "AssumeRoleSessionDae";
+	
     public static void main(String[] args) throws Exception {
 
         /*
@@ -48,10 +56,39 @@ public class TestSqs4Application {
                     "location (~/.aws/credentials), and is in valid format.",
                     e);
         }
+        /*
+         * 
+         * On va introduire de nouveaux credentials pour acceder aux objets de 
+         * la zone sandbox
+         * 
+         * 
+         */
+        // Step 1. On utilise le long-term credentials du compte qui exécute to call the
+        // AWS Security Token Service (STS) AssumeRole API, specifying 
+        // the ARN for the role DynamoDB-RO-role in research@example.com.
+        AWSSecurityTokenServiceClient stsClient = new  AWSSecurityTokenServiceClient(credentials);
+        AssumeRoleRequest assumeRequest = new AssumeRoleRequest()
+                .withRoleArn(param_assumed_role)
+                .withDurationSeconds(3600)
+                .withRoleSessionName(param_sessionName);
+        
+        AssumeRoleResult assumeResult = stsClient.assumeRole(assumeRequest);
+        
+        // Step 2. AssumeRole returns temporary security credentials for 
+        // the IAM role.
 
-        AmazonSQS sqs = new AmazonSQSClient(credentials);
-        Region usWest2 = Region.getRegion(Regions.EU_WEST_1); //eu-west-1
+            BasicSessionCredentials temporaryCredentials =
+            new BasicSessionCredentials(
+                        assumeResult.getCredentials().getAccessKeyId(),
+                        assumeResult.getCredentials().getSecretAccessKey(),
+                        assumeResult.getCredentials().getSessionToken());
+        
+        
+        AmazonSQS sqs = new AmazonSQSClient(temporaryCredentials);
+        Region usWest2 = Region.getRegion(Regions.EU_CENTRAL_1); //eu-west-1
         sqs.setRegion(usWest2);
+        
+        
 
         System.out.println("===========================================");
         System.out.println("Getting Started with Amazon SQS");

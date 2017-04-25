@@ -39,6 +39,9 @@ public class TestSqs4Application {
 	static String param_region="eu-central-1";
 	static String param_sessionName = "AssumeRoleSessionDae";
 	
+	static String param_queue_name="testQ";
+	static String param_queue_url="https://sqs.eu-central-1.amazonaws.com/347970623729/";
+	
     public static void main(String[] args) throws Exception {
 
         /*
@@ -95,22 +98,35 @@ public class TestSqs4Application {
         System.out.println("===========================================\n");
 
         try {
+        	
+        	
+        	/*
+        	 * Ce code n'est plus d'actualité
+        	 * On va utiliser une queue existante
+        	 *         	 * 
+        	 */
             // Create a queue
+        	/*
             System.out.println("Creating a new SQS queue called MyQueue.\n");
             CreateQueueRequest createQueueRequest = new CreateQueueRequest("MyQueue");
             String myQueueUrl = sqs.createQueue(createQueueRequest).getQueueUrl();
-
+			*/
             // List queues
+        	/*
             System.out.println("Listing all queues in your account.\n");
             for (String queueUrl : sqs.listQueues().getQueueUrls()) {
                 System.out.println("  QueueUrl: " + queueUrl);
             }
             System.out.println();
-
+			*/
             // Send a message
+        	
+        	String myQueueUrl = param_queue_url + param_queue_name;
             System.out.println("Sending a message to MyQueue.\n");
-            sqs.sendMessage(new SendMessageRequest(myQueueUrl, "This is my message text."));
+            sqs.sendMessage(new SendMessageRequest(myQueueUrl, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
 
+/*            
+            
             // Receive messages
             System.out.println("Receiving messages from MyQueue.\n");
             ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(myQueueUrl);
@@ -137,6 +153,10 @@ public class TestSqs4Application {
             // Delete a queue
             System.out.println("Deleting the test queue.\n");
             sqs.deleteQueue(new DeleteQueueRequest(myQueueUrl));
+            
+*/            
+            
+            
         } catch (AmazonServiceException ase) {
             System.out.println("Caught an AmazonServiceException, which means your request made it " +
                     "to Amazon SQS, but was rejected with an error response for some reason.");
